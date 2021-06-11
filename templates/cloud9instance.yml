@@ -1,0 +1,32 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+---
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: >
+  Creates an AWS Cloud9 EC2 environment within the default VPC with
+  a no-ingress EC2 instance. This is to be used in conjunction with 
+  Visual Studio Code and the Remote SSH extension. This relies on 
+  AWS Systems Manager in order to run properly.
+
+Resources:
+  DefaultVPCCloud9Instance:
+    Type: AWS::Cloud9::EnvironmentEC2
+    Properties:
+      InstanceType: t3.large
+      ConnectionType: CONNECT_SSM
+      Description: Cloud9 instance for use with VS Code Remote SSH
+      Name: VS Code Remote SSH Demo
+
+Outputs:
+  Cloud9Instance:
+    Description: The EC2 instance powering this AWS CLoud9 environment
+    Value: !Join
+      - ""
+      - - "https://"
+        - !Ref AWS::Region
+        - ".console.aws.amazon.com/ec2/v2/home?region="
+        - !Ref AWS::Region
+        - "#Instances:search="
+        - !Ref DefaultVPCCloud9Instance
+        - ";sort=tag:Name"

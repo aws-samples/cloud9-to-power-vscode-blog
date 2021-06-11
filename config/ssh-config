@@ -1,0 +1,9 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+
+# Update hostname with your AWS Cloud9 EC2 instance ID
+Host cloud9
+    IdentityFile ~/.ssh/id_rsa-cloud9
+    User ec2-user
+    HostName i-XXXXXXXXXXXXXXXXX
+    ProxyCommand sh -c "~/.ssh/ssm-proxy.sh %h %p"
