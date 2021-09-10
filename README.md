@@ -1,6 +1,6 @@
 ## Use AWS Cloud9 to Power your Visual Studio Code IDE
 
-The following repository contains the artifcats used in the blog post Use AWS Cloud9 to Power your Visual Studio Code IDE. Links forthcoming!
+The following repository contains the artifacts used in the blog post [Use AWS Cloud9 to Power your Visual Studio Code IDE](https://aws.amazon.com/blogs/architecture/field-notes-use-aws-cloud9-to-power-your-visual-studio-code-ide/).
 
 ## Security
 
