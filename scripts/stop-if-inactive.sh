@@ -41,7 +41,7 @@ is_vfs_connected() {
 }
 
 is_vscode_connected() {
-    pgrep -u ec2-user -f .vscode-server/bin/.*/server.sh >/dev/null
+    pgrep -u ec2-user -f .vscode-server/bin/ >/dev/null
 }
 
 if is_shutting_down; then
