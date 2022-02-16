@@ -19,29 +19,20 @@ getInstanceStatus() {
     --profile "${AWS_PROFILE}" --region "${AWS_REGION}"
 }
 
-STATUS="$(getInstanceStatus)"
+COUNT=0
+while [ "$(getInstanceStatus)" != 'Online' ]; do
+  if [ "${COUNT}" -eq 0 ]; then
+    # Instance is offline, start the instance.
+    aws ec2 start-instances --instance-ids "${HOST}" --profile "${AWS_PROFILE}" --region "${AWS_REGION}"
+  fi
+  if [ "${COUNT}" -eq "${MAX_ITERATION}" ]; then
+    # Max attempts reached, exit
+    exit 1
+  fi
+  let COUNT=COUNT+1
+  sleep "${SLEEP_DURATION}"
+done
 
-# If the instance is online, start the session
-if [ ${STATUS} != 'Online' ]; then
-    # Instance is offline - start the instance
-    aws ec2 start-instances --instance-ids $HOST --profile ${AWS_PROFILE} --region ${AWS_REGION}
-    sleep ${SLEEP_DURATION}
-    COUNT=0
-    while [ ${COUNT} -le ${MAX_ITERATION} ]; do
-        STATUS="$(getInstanceStatus)"
-        if [ ${STATUS} == 'Online' ]; then
-            break
-        fi
-        # Max attempts reached, exit
-        if [ ${COUNT} -eq ${MAX_ITERATION} ]; then
-            exit 1
-        else
-            let COUNT=COUNT+1
-            sleep ${SLEEP_DURATION}
-        fi
-    done
-    # Instance is online now - start the session
-fi
-
+# Instance is online, start the session.
 aws ssm start-session --target "${HOST}" --document-name AWS-StartSSHSession \
   --parameters portNumber="${PORT}" --profile "${AWS_PROFILE}" --region "${AWS_REGION}"
