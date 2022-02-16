@@ -22,9 +22,7 @@ getInstanceStatus() {
 STATUS="$(getInstanceStatus)"
 
 # If the instance is online, start the session
-if [ ${STATUS} == 'Online' ]; then
-    aws ssm start-session --target $HOST --document-name AWS-StartSSHSession --parameters portNumber=${PORT} --profile ${AWS_PROFILE} --region ${AWS_REGION}
-else
+if [ ${STATUS} != 'Online' ]; then
     # Instance is offline - start the instance
     aws ec2 start-instances --instance-ids $HOST --profile ${AWS_PROFILE} --region ${AWS_REGION}
     sleep ${SLEEP_DURATION}
@@ -43,5 +41,7 @@ else
         fi
     done
     # Instance is online now - start the session
-    aws ssm start-session --target $HOST --document-name AWS-StartSSHSession --parameters portNumber=${PORT} --profile ${AWS_PROFILE} --region ${AWS_REGION}
 fi
+
+aws ssm start-session --target "${HOST}" --document-name AWS-StartSSHSession \
+  --parameters portNumber="${PORT}" --profile "${AWS_PROFILE}" --region "${AWS_REGION}"
