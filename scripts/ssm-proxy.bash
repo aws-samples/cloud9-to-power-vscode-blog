@@ -4,8 +4,8 @@
 
 # Configuration
 # Change these values to reflect your environment
-AWS_PROFILE='cloud9'
-AWS_REGION='us-east-1'
+AWS_PROFILE="${AWS_PROFILE:=cloud9}"
+AWS_REGION="${AWS_REGION:=us-east-1}"
 MAX_ITERATION=5
 SLEEP_DURATION=5
 
