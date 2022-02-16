@@ -1,7 +1,7 @@
+#!/usr/bin/env bash
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: MIT-0
 
-#!/bin/bash
 set -euo pipefail
 CONFIG=$(cat /home/ec2-user/.c9/autoshutdown-configuration)
 SHUTDOWN_TIMEOUT=${CONFIG#*=}
