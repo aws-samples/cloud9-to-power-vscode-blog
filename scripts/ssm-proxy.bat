@@ -80,3 +80,12 @@ IF "%STATUS%" == "Online" (
 ENDLOCAL
 
 EXIT /b 0
+
+rem Host HOSTNAME_ALIAS
+rem   HostName i-asdfgxcvb98ubcxbv
+rem   IdentityFile C:\Users\{user}\.ssh\id_rsa
+rem   User ec2-user
+rem   Port 22
+rem   ProxyCommand  C:\Users\{user}\.ssh\ssm-proxy.bat %h %p
+
+rem  !!! %USERPROFILE% not working
