@@ -7,10 +7,12 @@ SETLOCAL
 
 rem Configuration
 rem Change these values to reflect your environment
-SET AWS_PROFILE=cloud9
-SET AWS_REGION=us-east-1
+SET AWS_PROFILE=nextlab_metalhwal
+SET AWS_REGION=ap-northeast-2
 SET MAX_ITERATION=5
 SET SLEEP_DURATION=5
+SET HOST=%1
+SET PORT=%2
 
 rem # For debug
 echo "Host %HOST%"
@@ -37,7 +39,7 @@ IF "%STATUS%" == "Online" (
 	--region %AWS_REGION%
 ) ELSE (
 	aws ec2 start-instances --instance-ids %HOST% --profile %AWS_PROFILE% --region %AWS_REGION%
-	sleep %SLEEP_DURATION%  
+	TIMEOUT /t %SLEEP_DURATION% > NUL
 
 	SET /a COUNT=1
 	SET /a MAX_ITERATION=5
@@ -80,6 +82,8 @@ IF "%STATUS%" == "Online" (
 ENDLOCAL
 
 EXIT /b 0
+
+
 
 rem Host HOSTNAME_ALIAS
 rem   HostName i-asdfgxcvb98ubcxbv
