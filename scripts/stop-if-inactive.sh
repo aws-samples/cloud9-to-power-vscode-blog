@@ -47,6 +47,10 @@ is_vscode_connected() {
 if is_shutting_down; then
     if [[ ! $SHUTDOWN_TIMEOUT =~ ^[0-9]+$ ]] || is_vfs_connected || is_vscode_connected; then
         sudo shutdown -c
+        echo > "/home/ec2-user/.c9/autoshutdown-timestamp"
+    else
+        TIMESTAMP=$(date +%s)
+        echo "$TIMESTAMP" > "/home/ec2-user/.c9/autoshutdown-timestamp"    
     fi
 else
     if [[ $SHUTDOWN_TIMEOUT =~ ^[0-9]+$ ]] && ! is_vfs_connected && ! is_vscode_connected; then
