@@ -41,7 +41,7 @@ is_vfs_connected() {
 }
 
 is_vscode_connected() {
-    pgrep -u ec2-user -f .vscode-server/bin/ >/dev/null
+    pgrep -u ec2-user -f .vscode-server/bin/ -a | grep -v -F 'shellIntegration-bash.sh' >/dev/null
 }
 
 if is_shutting_down; then
