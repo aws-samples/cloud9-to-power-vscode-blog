@@ -41,12 +41,16 @@ is_vfs_connected() {
 }
 
 is_vscode_connected() {
-    pgrep -u ec2-user -f .vscode-server/bin/ >/dev/null
+    pgrep -u ec2-user -f .vscode-server/bin/ -a | grep -v -F 'shellIntegration-bash.sh' >/dev/null
 }
 
 if is_shutting_down; then
     if [[ ! $SHUTDOWN_TIMEOUT =~ ^[0-9]+$ ]] || is_vfs_connected || is_vscode_connected; then
         sudo shutdown -c
+        echo > "/home/ec2-user/.c9/autoshutdown-timestamp"
+    else
+        TIMESTAMP=$(date +%s)
+        echo "$TIMESTAMP" > "/home/ec2-user/.c9/autoshutdown-timestamp"    
     fi
 else
     if [[ $SHUTDOWN_TIMEOUT =~ ^[0-9]+$ ]] && ! is_vfs_connected && ! is_vscode_connected; then
