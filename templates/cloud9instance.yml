@@ -17,6 +17,7 @@ Resources:
       ConnectionType: CONNECT_SSM
       Description: Cloud9 instance for use with VS Code Remote SSH
       Name: VS Code Remote SSH Demo
+      ImageId: amazonlinux-2-x86_64
 
 Outputs:
   Cloud9Instance:
