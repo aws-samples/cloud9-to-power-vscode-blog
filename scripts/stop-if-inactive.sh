@@ -10,7 +10,7 @@ if ! [[ $SHUTDOWN_TIMEOUT =~ ^[0-9]*$ ]]; then
     exit 1
 fi
 is_shutting_down() {
-    is_shutting_down_ubuntu &> /dev/null || is_shutting_down_al1 &> /dev/null || is_shutting_down_al2 &> /dev/null
+    is_shutting_down_ubuntu &> /dev/null || is_shutting_down_al1 &> /dev/null || is_shutting_down_al2 &> /dev/null || is_shutting_down_al2023 &> /dev/null
 }
 is_shutting_down_ubuntu() {
     local TIMEOUT
@@ -18,7 +18,9 @@ is_shutting_down_ubuntu() {
     if [ "$?" -ne "0" ]; then
         return 1
     fi
-    if [ "$(echo $TIMEOUT | awk "{print \$3}")" == "0" ]; then
+    local SHUTDOWN_TIMESTAMP
+    SHUTDOWN_TIMESTAMP="$(echo $TIMEOUT | awk "{print \$3}")"
+    if [ $SHUTDOWN_TIMESTAMP == "0" ] || [ $SHUTDOWN_TIMESTAMP == "18446744073709551615" ]; then
         return 1
     else
         return 0
@@ -36,6 +38,20 @@ is_shutting_down_al2() {
         return 1
     fi
 }
+is_shutting_down_al2023() {
+    local TIMEOUT
+    TIMEOUT=$(busctl get-property org.freedesktop.login1 /org/freedesktop/login1 org.freedesktop.login1.Manager ScheduledShutdown)
+    if [ "$?" -ne "0" ]; then
+        return 1
+    fi
+    local SHUTDOWN_TIMESTAMP
+    SHUTDOWN_TIMESTAMP="$(echo $TIMEOUT | awk "{print \$3}")"
+    if [ $SHUTDOWN_TIMESTAMP == "0" ] || [ $SHUTDOWN_TIMESTAMP == "18446744073709551615" ]; then
+        return 1
+    else
+        return 0
+    fi
+}
 is_vfs_connected() {
     pgrep -f vfs-worker >/dev/null
 }
@@ -50,7 +66,7 @@ if is_shutting_down; then
         echo > "/home/ec2-user/.c9/autoshutdown-timestamp"
     else
         TIMESTAMP=$(date +%s)
-        echo "$TIMESTAMP" > "/home/ec2-user/.c9/autoshutdown-timestamp"    
+        echo "$TIMESTAMP" > "/home/ec2-user/.c9/autoshutdown-timestamp"
     fi
 else
     if [[ $SHUTDOWN_TIMEOUT =~ ^[0-9]+$ ]] && ! is_vfs_connected && ! is_vscode_connected; then
