@@ -13,6 +13,9 @@ SLEEP_DURATION=5
 HOST=$1
 PORT=$2
 
+# Set aws cli path
+PATH=/usr/local/bin:$PATH
+
 STATUS=`aws ssm describe-instance-information --filters Key=InstanceIds,Values=${HOST} --output text --query 'InstanceInformationList[0].PingStatus' --profile ${AWS_PROFILE} --region ${AWS_REGION}`
 
 # If the instance is online, start the session
