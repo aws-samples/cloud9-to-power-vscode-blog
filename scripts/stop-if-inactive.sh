@@ -1,9 +1,13 @@
+#!/bin/bash
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: MIT-0
 
-#!/bin/bash
 set -euo pipefail
-CONFIG=$(cat /home/ec2-user/.c9/autoshutdown-configuration)
+# This script is invoked in /etc/cron.d/c9-automatic-shutdown
+# which uses the full path to the file: /home/<username>/.c9/stop-if-inactive.sh
+# Parse the username from the file path, which can vary based on the Cloud9's OS.
+USER=$(echo $0 | cut -d'/' -f3)
+CONFIG=$(cat /home/$USER/.c9/autoshutdown-configuration)
 SHUTDOWN_TIMEOUT=${CONFIG#*=}
 if ! [[ $SHUTDOWN_TIMEOUT =~ ^[0-9]*$ ]]; then
     echo "shutdown timeout is invalid"
@@ -57,17 +61,16 @@ is_vfs_connected() {
 }
 
 is_vscode_connected() {
-    pgrep -u ec2-user -f .vscode-server/bin/ -a | grep -v -F 'shellIntegration-bash.sh' >/dev/null || \
-    pgrep -u ec2-user -f /home/ec2-user/.vscode-server/code- -a >/dev/null
+    pgrep -u $USER -f .vscode-server/bin/ -a | grep -v -F 'shellIntegration-bash.sh' >/dev/null
 }
 
 if is_shutting_down; then
     if [[ ! $SHUTDOWN_TIMEOUT =~ ^[0-9]+$ ]] || is_vfs_connected || is_vscode_connected; then
         sudo shutdown -c
-        echo > "/home/ec2-user/.c9/autoshutdown-timestamp"
+        echo > "/home/$USER/.c9/autoshutdown-timestamp"
     else
         TIMESTAMP=$(date +%s)
-        echo "$TIMESTAMP" > "/home/ec2-user/.c9/autoshutdown-timestamp"
+        echo "$TIMESTAMP" > "/home/$USER/.c9/autoshutdown-timestamp"
     fi
 else
     if [[ $SHUTDOWN_TIMEOUT =~ ^[0-9]+$ ]] && ! is_vfs_connected && ! is_vscode_connected; then
